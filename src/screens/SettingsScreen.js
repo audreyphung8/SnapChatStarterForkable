@@ -257,6 +257,7 @@ export default function SettingsScreen() {
 
       {/* Log Out Button */}
       <Button onPress={handleSignOut} title="Log Out" style={styles.button} />
+      
     </View>
   );
 }

@@ -1,5 +1,7 @@
-import React, { useEffect } from "react";
-import { FlatList, Image, StyleSheet } from "react-native";
+import React, { useState, useEffect } from "react"
+import { Button } from "react-native";
+import { FlatList, Image, StyleSheet } from "react-native"
+import {uploadSpotlightPicture } from "../components/SpotlightPicture"
 
 const RAWDATA = [
   {
@@ -19,6 +21,7 @@ const RAWDATA = [
     title: "Fourth Item",
   },
 ];
+
 const DATA = []
 //plan
 //make a function using useEffect (so that it happens on load)
@@ -26,7 +29,6 @@ const DATA = []
   //when iterating check if the id will give a valid 200
   //if so append that element to DATA
   //at end of iterations, data, now only has good urls
-
 
   async function filterValidImages(imageList) {
 
@@ -57,14 +59,30 @@ export default function SpotlightScreen() {
       filterValidImages(RAWDATA);
     }
   );
+  
   return (
-    <FlatList
-      contentContainerStyle={styles.container}
-      pagingEnabled={true}
-      data={DATA}
-      keyExtractor={(item) => item.id}
-      renderItem={renderItem}
-    />
+    <>
+      <Button title="Upload Image" onPress={uploadSpotlightPicture}/>
+      <FlatList
+        contentContainerStyle={styles.container}
+        pagingEnabled={true}
+        data={DATA}
+        keyExtractor={(item) => item.id}
+        renderItem={renderItem}
+      />
+
+    
+      {/* <View>
+      <SpotlightPicture
+        size={200}
+        url={avatarUrl}
+        onUpload={(url) => {
+          setAvatarUrl(url)
+          updateProfile({ username, website, avatar_url: url })
+        }}
+      />
+    </View> */}
+    </>
   );
 }
 
