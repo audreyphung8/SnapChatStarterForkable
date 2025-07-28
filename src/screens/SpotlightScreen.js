@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react"
 import { Button } from "react-native";
 import { FlatList, Image, StyleSheet } from "react-native"
-import {uploadSpotlightPicture } from "../components/SpotlightPicture"
+import {uploadSpotlightPicture, fetchSpotlightPictures } from "../components/SpotlightPicture"
 
 const RAWDATA = [
   {
@@ -30,48 +30,34 @@ const DATA = []
   //if so append that element to DATA
   //at end of iterations, data, now only has good urls
 
-  async function filterValidImages(imageList) {
-
-  for (const element of imageList) {
-    const URL = element.id
-    if (await isValidImage(URL)) {
-      DATA.push(element);
-    }
-  }
-}
-
-async function isValidImage(url) {
-  try {
-    const response = await fetch(url, { method: 'HEAD' }); // Only checks headers
-    return response.ok;
-  } catch (err) {
-    return false; // Network error or invalid URL
-  }
-}
-
 const renderItem = ({ item }) => {
-  return <Image style={styles.image} source={{ uri: item.id }} />;
+    return <Image style={styles.image} source={{ uri: item.id }} />
 };
 
 export default function SpotlightScreen() {
-    useEffect(() => {
-      console.log("useEffect ran");
-      filterValidImages(RAWDATA);
+
+  const [filteredData, setFilteredData] = useState([])
+
+  useEffect(() => {
+    const getImages = async () => {
+      const images = await fetchSpotlightPictures()
+      setFilteredData(images)
     }
-  );
-  
+    getImages()
+  }, [])
+
+
   return (
     <>
       <Button title="Upload Image" onPress={uploadSpotlightPicture}/>
       <FlatList
         contentContainerStyle={styles.container}
         pagingEnabled={true}
-        data={DATA}
+        data={filteredData}
         keyExtractor={(item) => item.id}
         renderItem={renderItem}
       />
 
-    
       {/* <View>
       <SpotlightPicture
         size={200}
@@ -96,5 +82,5 @@ const styles = StyleSheet.create({
   },
   image: {
     height: 800,
-  },
+  }
 });

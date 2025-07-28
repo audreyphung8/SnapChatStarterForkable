@@ -1,6 +1,36 @@
 import { supabase } from '../utils/hooks/supabase'
 import * as ImagePicker from 'expo-image-picker'
 
+export async function fetchSpotlightPictures() {
+  try {
+    const { data, error } = await supabase
+      .storage
+      .from('avatars')
+      .list('avatars', { limit: 100, offset: 0 }) 
+
+    if (error) {
+      throw error
+    }
+
+    const publicUrls = data.map(file => {
+      const { publicUrl } = supabase
+        .storage
+        .from('avatars')
+        .getPublicUrl(`avatars/${file.name}`)
+        .data
+
+      return {
+        id: publicUrl,
+        title: file.name
+      }
+    })
+    return publicUrls
+  } catch (error) {
+    console.error('Error fetching bucket images:', error)
+    return []
+  }
+}
+
 export async function uploadSpotlightPicture() {
   try {
     const result = await ImagePicker.launchImageLibraryAsync({
